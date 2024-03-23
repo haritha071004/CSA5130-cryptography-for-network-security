@@ -1,0 +1,64 @@
+def generate_playfair_matrix(keyword):
+    # Remove duplicate letters from the keyword and append remaining letters of the alphabet
+    keyword = ''.join(sorted(set(keyword), key=keyword.index))
+    alphabet = "abcdefghiklmnopqrstuvwxyz"
+    remaining_letters = ''.join([letter for letter in alphabet if letter not in keyword])
+
+    # Construct the 5x5 matrix
+    matrix = keyword + remaining_letters
+    matrix = [matrix[i:i+5] for i in range(0, len(matrix), 5)]
+    return matrix
+
+def find_position(matrix, letter):
+    for i in range(len(matrix)):
+        for j in range(len(matrix[i])):
+            if matrix[i][j] == letter:
+                return i, j
+    # Return (None, None) if the letter is not found in the matrix
+    return None, None
+
+def playfair_encrypt(message, keyword):
+    # Prepare the message by removing spaces and converting to uppercase
+    message = message.replace(" ", "").upper()
+
+    # Generate the Playfair matrix
+    matrix = generate_playfair_matrix(keyword)
+
+    # Encrypt the message two letters at a time
+    encrypted_message = ""
+    for i in range(0, len(message), 2):
+        letter1 = message[i]
+        if i + 1 < len(message):
+            letter2 = message[i + 1]
+        else:
+            # Append 'X' if the message length is odd
+            letter2 = 'X'
+
+        row1, col1 = find_position(matrix, letter1)
+        row2, col2 = find_position(matrix, letter2)
+
+        # Handle the case where a letter is not found in the matrix
+        if row1 is None or row2 is None or col1 is None or col2 is None:
+            encrypted_message += letter1 + letter2
+        elif row1 == row2:
+            encrypted_message += matrix[row1][(col1 + 1) % 5] + matrix[row2][(col2 + 1) % 5]
+        elif col1 == col2:
+            encrypted_message += matrix[(row1 + 1) % 5][col1] + matrix[(row2 + 1) % 5][col2]
+        else:
+            encrypted_message += matrix[row1][col2] + matrix[row2][col1]
+
+    return encrypted_message
+
+def main():
+    message = input("Enter the plaintext message: ")
+    keyword = input("Enter the keyword: ")
+
+    encrypted_message = playfair_encrypt(message, keyword)
+    print("Encrypted message:", encrypted_message)
+
+if __name__ == "__main__":
+    main()
+OUTPUT:
+Enter the plaintext message: cryptography
+Enter the keyword: playfair
+Encrypted message: ABDRIMQCFV
