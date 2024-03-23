@@ -1,0 +1,66 @@
+import random
+
+def generate_cipher_key():
+    # Generate a random permutation of the alphabet
+    alphabet = list("abcdefghijklmnopqrstuvwxyz")
+    random.shuffle(alphabet)
+    return {chr(97 + i): alphabet[i] for i in range(26)}
+
+def monoalphabetic_substitution_encrypt(message, cipher_key):
+    encrypted_message = ""
+
+    for char in message:
+        # Encrypt alphabetic characters
+        if char.isalpha():
+            if char.isupper():
+                encrypted_char = cipher_key[char.lower()].upper()
+            else:
+                encrypted_char = cipher_key[char]
+        else:
+            encrypted_char = char  # Preserve non-alphabetic characters
+        
+        encrypted_message += encrypted_char
+
+    return encrypted_message
+
+def monoalphabetic_substitution_decrypt(encrypted_message, cipher_key):
+    decrypted_message = ""
+
+    # Generate the decryption key by swapping keys and values in the cipher key
+    decryption_key = {value: key for key, value in cipher_key.items()}
+
+    for char in encrypted_message:
+        # Decrypt alphabetic characters
+        if char.isalpha():
+            if char.isupper():
+                decrypted_char = decryption_key[char.lower()].upper()
+            else:
+                decrypted_char = decryption_key[char]
+        else:
+            decrypted_char = char  # Preserve non-alphabetic characters
+        
+        decrypted_message += decrypted_char
+
+    return decrypted_message
+
+def main():
+    message = input("Enter a message: ")
+    
+    # Generate a cipher key
+    cipher_key = generate_cipher_key()
+
+    # Encrypt the message
+    encrypted_message = monoalphabetic_substitution_encrypt(message, cipher_key)
+    print("Encrypted message:", encrypted_message)
+
+    # Decrypt the message
+    decrypted_message = monoalphabetic_substitution_decrypt(encrypted_message, cipher_key)
+    print("Decrypted message:", decrypted_message)
+
+if __name__ == "__main__":
+    main()
+
+OUTPUT:
+Enter a message: abi
+Encrypted message: prn
+Decrypted message: abi
