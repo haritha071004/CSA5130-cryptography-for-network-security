@@ -1,0 +1,60 @@
+def mod(a, b):
+    return (a % b + b) % b
+
+def is_coprime(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a == 1
+
+def calculate_inverse(a):
+    for i in range(1, 26):
+        if (a * i) % 26 == 1:
+            return i
+    return -1
+
+def encrypt(ch, a, b):
+    if ch.isalpha():
+        index = ord(ch.lower()) - ord('a')
+        encrypted_index = mod((a * index + b), 26)
+        return chr(encrypted_index + ord('a')).upper() if ch.isupper() else chr(encrypted_index + ord('a'))
+    return ch
+
+def decrypt(ch, a, b):
+    if ch.isalpha():
+        index = ord(ch.lower()) - ord('a')
+        inverse_a = calculate_inverse(a)
+        if inverse_a != -1:
+            decrypted_index = mod((inverse_a * (index - b)), 26)
+            return chr(decrypted_index + ord('a')).upper() if ch.isupper() else chr(decrypted_index + ord('a'))
+    return ch
+
+def main():
+    plaintext = "affinecaesarcipher"
+    a = 5  # Example value for a
+    b = 8  # Example value for b
+
+    # Check if 'a' is a valid value (coprime with 26)
+    if not is_coprime(a, 26):
+        print("Error: 'a' must be coprime with 26 for one-to-one mapping.")
+        return
+
+    print("Original message:", plaintext)
+
+    # Encrypt the message
+    encrypted_message = ''.join(encrypt(ch, a, b) for ch in plaintext)
+    print("Encrypted message:", encrypted_message)
+
+    # Decrypt the message
+    decrypted_message = ''.join(decrypt(ch, a, b) for ch in encrypted_message)
+    print("Decrypted message:", decrypted_message)
+
+if __name__ == "__main__":
+    main()
+
+
+
+OUTPUT:
+Original message: affinecaesarcipher
+Encrypted message: ihhwvcsicuipswfrcp
+Decrypted message: affinecaesarcipher
+>>> 
