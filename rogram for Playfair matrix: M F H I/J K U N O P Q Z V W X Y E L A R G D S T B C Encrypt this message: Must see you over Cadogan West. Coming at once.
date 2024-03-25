@@ -1,0 +1,65 @@
+def create_playfair_matrix(key):
+    key = key.upper().replace("J", "I")  # Convert key to uppercase and replace J with I
+    key_set = set(key)
+    alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"  # Playfair matrix excludes 'J'
+    playfair_matrix = []
+
+    for char in key + alphabet:
+        if char not in key_set:
+            key_set.add(char)
+
+    for i in range(0, 25, 5):
+        playfair_matrix.append(list(key + alphabet)[i:i+5])
+
+    return playfair_matrix
+
+def find_position(matrix, char):
+    for i, row in enumerate(matrix):
+        for j, val in enumerate(row):
+            if val == char:
+                return i, j
+
+def encrypt_playfair(plaintext, matrix):
+    plaintext = plaintext.upper().replace("J", "I")
+    plaintext_pairs = []
+    ciphertext = ""
+    
+    # Prepare plaintext pairs (digraphs)
+    for i in range(0, len(plaintext), 2):
+        if i == len(plaintext) - 1 or plaintext[i] == plaintext[i + 1]:
+            plaintext_pairs.append(plaintext[i] + 'X')
+            plaintext = plaintext[:i + 1] + 'X' + plaintext[i + 1:]
+        else:
+            plaintext_pairs.append(plaintext[i:i + 2])
+
+    for pair in plaintext_pairs:
+        char1, char2 = pair[0], pair[1]
+        row1, col1 = find_position(matrix, char1)
+        row2, col2 = find_position(matrix, char2)
+
+        if col1 == col2:
+            ciphertext += matrix[(row1 + 1) % 5][col1]
+            ciphertext += matrix[(row2 + 1) % 5][col2]
+        elif row1 == row2:
+            ciphertext += matrix[row1][(col1 + 1) % 5]
+            ciphertext += matrix[row2][(col2 + 1) % 5]
+        else:
+            ciphertext += matrix[row1][col2]
+            ciphertext += matrix[row2][col1]
+
+    return ciphertext
+
+def main():
+    key = "MFHIKUNOPQZVWXYELARGBDSTBC"  # Key is provided
+    message = "Must see you over Cadogan West. Coming at once."
+
+    playfair_matrix = create_playfair_matrix(key)
+    encrypted_message = encrypt_playfair(message, playfair_matrix)
+    print("Encrypted message:", encrypted_message)
+
+if __name__ == "__main__":
+    main()
+
+
+OUTPUT:
+Encrypted message: FLGPFAPQXPEZJQZHRPHZNJONQLIEGVJLWHMMOHAKVKVUJ
