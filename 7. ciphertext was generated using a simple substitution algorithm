@@ -1,0 +1,80 @@
+import re
+
+def decrypt_simple_substitution(ciphertext, mapping):
+    decrypted_message = ""
+    for char in ciphertext:
+        decrypted_message += mapping.get(char, char)
+    return decrypted_message
+
+def main():
+    # Ciphertext to decrypt
+    ciphertext = "VBIUV ZBP OVMZ UGQ UFM NQCZ VBIUV VZBZ NB BNF UKM CZN VCW. QVNZ VBIUV VZBZ NB KBNF UKM CZN VCW."
+
+    # Hints for decryption
+    hints = {
+        'E': ['E', 'e'],
+        'T': ['T', 't'],
+        'H': ['H', 'h'],
+        'THE': ['the', 'THE']
+    }
+
+    # Find characters that decode to 'e'
+    e_candidates = []
+    for char in ciphertext:
+        if char in hints['E']:
+            e_candidates.append(char)
+
+    # Find characters that decode to 't' and 'h'
+    th_candidates = []
+    for char in ciphertext:
+        if char in hints['T'] or char in hints['H']:
+            th_candidates.append(char)
+
+    # Find the most common word "the" and deduce characters for 't' and 'h'
+    the_candidates = re.findall(r'\bTHE\b', ciphertext)
+    t_candidate = None
+    h_candidate = None
+    if the_candidates:
+        the_positions = [m.start() for m in re.finditer('THE', ciphertext)]
+        for pos in the_positions:
+            if ciphertext[pos - 1] in th_candidates:
+                t_candidate = ciphertext[pos - 1]
+            if ciphertext[pos + 3] in th_candidates:
+                h_candidate = ciphertext[pos + 3]
+
+    # Deduce additional words based on common English words and known mappings
+    mapping = {
+        'V': 't',
+        'B': 'h',
+        'I': 'e',
+        'U': 'a',
+        'Z': 's',
+        'P': 'r',
+        'O': 'n',
+        'M': 'o',
+        'G': 'd',
+        'Q': 'i',
+        'F': 'l',
+        'N': 'c',
+        'C': 'u',
+        'K': 'g',
+        'W': 'y'
+    }
+
+    # Add characters for 'e', 't', and 'h' to the mapping
+    if e_candidates:
+        mapping[e_candidates[0]] = 'e'
+    if t_candidate:
+        mapping[t_candidate] = 't'
+    if h_candidate:
+        mapping[h_candidate] = 'h'
+
+    # Decrypt the ciphertext using the mapping
+    decrypted_message = decrypt_simple_substitution(ciphertext, mapping)
+
+    print("Decrypted message:", decrypted_message)
+
+if __name__ == "__main__":
+    main()
+Decrypted message: theat shr ntos adi alo cius theat tshs ch hcl ago usc tuy. itcs theat tshs ch ghcl ago usc tuy.
+OUTPUT:
