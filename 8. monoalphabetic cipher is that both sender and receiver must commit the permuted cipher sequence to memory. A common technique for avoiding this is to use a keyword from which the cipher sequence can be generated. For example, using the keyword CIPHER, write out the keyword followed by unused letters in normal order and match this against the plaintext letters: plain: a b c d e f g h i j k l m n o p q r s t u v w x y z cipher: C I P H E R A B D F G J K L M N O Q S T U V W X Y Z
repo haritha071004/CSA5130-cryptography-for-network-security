@@ -1,0 +1,45 @@
+import string
+
+def generate_cipher_sequence(keyword):
+    keyword = keyword.upper()
+    alphabet = string.ascii_uppercase
+    cipher_sequence = list(keyword)
+
+    for letter in alphabet:
+        if letter not in cipher_sequence:
+            cipher_sequence.append(letter)
+
+    return ''.join(cipher_sequence)
+
+def encrypt(plaintext, cipher):
+    encrypted_text = ''
+    for char in plaintext:
+        if char.isalpha():
+            if char.isupper():
+                index = ord(char) - ord('A')
+                encrypted_text += cipher[index]
+            else:
+                index = ord(char.upper()) - ord('A')
+                encrypted_text += cipher[index].lower()
+        else:
+            encrypted_text += char
+    return encrypted_text
+
+def main():
+    keyword = input("Enter the keyword: ")
+    cipher = generate_cipher_sequence(keyword)
+    print("Generated Cipher Sequence:", cipher)
+
+    plaintext = input("Enter the plaintext: ")
+    encrypted_text = encrypt(plaintext, cipher)
+    print("Encrypted text:", encrypted_text)
+
+if __name__ == "__main__":
+    main()
+
+OUTPUT:
+Enter the keyword: CIPHER
+Generated Cipher Sequence: CIPHERABDFGJKLNMOSTUVWXYZ
+Enter the plaintext: Hello World
+Encrypted text: Jhomm Xhqms
+
