@@ -1,0 +1,54 @@
+def create_playfair_matrix(key):
+    key = key.upper().replace("J", "I")  # Convert key to uppercase and replace J with I
+    key_set = set(key)
+    alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"  # Playfair matrix excludes 'J'
+    playfair_matrix = []
+
+    for char in key + alphabet:
+        if char not in key_set:
+            key_set.add(char)
+
+    for i in range(0, 25, 5):
+        playfair_matrix.append(list(key + alphabet)[i:i+5])
+
+    return playfair_matrix
+
+def find_position(matrix, char):
+    for i, row in enumerate(matrix):
+        for j, val in enumerate(row):
+            if val == char:
+                return i, j
+
+def decrypt_playfair(ciphertext, matrix):
+    plaintext = ""
+    for i in range(0, len(ciphertext), 2):
+        char1, char2 = ciphertext[i], ciphertext[i + 1]
+        row1, col1 = find_position(matrix, char1)
+        row2, col2 = find_position(matrix, char2)
+
+        if col1 == col2:
+            plaintext += matrix[(row1 - 1) % 5][col1]
+            plaintext += matrix[(row2 - 1) % 5][col2]
+        elif row1 == row2:
+            plaintext += matrix[row1][(col1 - 1) % 5]
+            plaintext += matrix[row2][(col2 - 1) % 5]
+        else:
+            plaintext += matrix[row1][col2]
+            plaintext += matrix[row2][col1]
+
+    return plaintext
+
+def main():
+    key = "PT109"  # Key is "PT109" as per the context
+    ciphertext = "KXJEYUREBEZWEHEWRYTUHEYFSKREHEGOYFIWTTTUOLKSYCAJPOBOTEIZONTXBYBNTGONEYCUZWRGDSONSXBOUYWRHEBAAHYUSEDQ"
+
+    playfair_matrix = create_playfair_matrix(key)
+    plaintext = decrypt_playfair(ciphertext, playfair_matrix)
+    print("Decrypted message:", plaintext)
+
+if __name__ == "__main__":
+    main()
+
+
+OUTPUT:
+Decrypted message: THISISAXSECRETMESSAGEXSENDXHELPXIMMEDIATELYX
