@@ -1,0 +1,38 @@
+import math
+
+def calculate_possible_keys():
+    # Total number of possible keys without considering identical encryption results
+    total_keys = math.perm(25, 25)
+    return total_keys
+
+def calculate_effectively_unique_keys():
+    # Number of effectively unique keys
+    # For each key length (1 to 25), calculate the number of effectively unique keys
+    effectively_unique_keys = 0
+    for key_length in range(1, 26):
+        unique_keys_for_length = math.perm(25, key_length) // (2 ** (key_length - 1))
+        effectively_unique_keys += unique_keys_for_length
+    return effectively_unique_keys
+
+def main():
+    total_keys = calculate_possible_keys()
+    effectively_unique_keys = calculate_effectively_unique_keys()
+    
+    print("Total possible keys for the Playfair cipher (approximate power of 2):")
+    print("Total Keys: ~2^{}".format(int(math.log2(total_keys))))
+    
+    print("\nNumber of effectively unique keys taking into account identical encryption results:")
+    print("Effectively Unique Keys: {}".format(effectively_unique_keys))
+
+if __name__ == "__main__":
+    main()
+
+
+OUTPUT:
+Total possible keys for the Playfair cipher (approximate power of 2):
+Total Keys: ~2^83
+
+Number of effectively unique keys taking into account identical encryption results:
+Effectively Unique Keys: 6831479142455409603
+>>> 
+
