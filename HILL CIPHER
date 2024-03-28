@@ -1,0 +1,54 @@
+import numpy as np
+
+class HillCipher:
+    def __init__(self, key):
+        self.key = key
+
+    def encrypt(self, plaintext):
+        plaintext = ''.join(filter(str.isalpha, plaintext)).upper()
+        n = len(self.key)
+        # Padding if needed
+        if len(plaintext) % n != 0:
+            plaintext += 'X' * (n - len(plaintext) % n)
+        matrix = np.array([[ord(ch) - ord('A') for ch in plaintext[i:i+n]] for i in range(0, len(plaintext), n)])
+        encrypted_text = ''
+        for chunk in matrix:
+            encrypted_chunk = (np.dot(self.key, chunk) % 26).tolist()
+            encrypted_text += ''.join(chr(num + ord('A')) for num in encrypted_chunk)
+        return encrypted_text
+
+    def decrypt(self, ciphertext):
+        n = len(self.key)
+        inv_key = np.linalg.inv(self.key)
+        det = int(round(np.linalg.det(self.key)))
+        mod_inv_det = self.modular_inverse(det, 26)
+        decrypted_text = ''
+        matrix = np.array([[ord(ch) - ord('A') for ch in ciphertext[i:i+n]] for i in range(0, len(ciphertext), n)])
+        for chunk in matrix:
+            decrypted_chunk = (np.dot(inv_key, chunk) * mod_inv_det % 26).tolist()
+            decrypted_text += ''.join(chr(num + ord('A')) for num in decrypted_chunk)
+        return decrypted_text
+
+    def modular_inverse(self, a, m):
+        for i in range(1, m):
+            if (a * i) % m == 1:
+                return i
+        return None
+
+# Example usage
+key = np.array([[6, 24, 1], [13, 16, 10], [20, 17, 15]])
+cipher = HillCipher(key)
+
+plaintext = "HELLO"
+encrypted_text = cipher.encrypt(plaintext)
+decrypted_text = cipher.decrypt(encrypted_text)
+
+print("Original text:", plaintext)
+print("Encrypted text:", encrypted_text)
+print("Decrypted text:", decrypted_text)
+
+
+OUTPUT:
+Original text: HELLO
+Encrypted text: DBIUC
+Decrypted text: HELLO
