@@ -1,0 +1,55 @@
+def rail_fence_encrypt(plain_text, rails):
+    fence = [[] for _ in range(rails)]
+    rail = 0
+    direction = 1
+
+    for char in plain_text:
+        fence[rail].append(char)
+        rail += direction
+
+        if rail == rails - 1 or rail == 0:
+            direction = -direction
+
+    cipher_text = ''
+    for rail in fence:
+        cipher_text += ''.join(rail)
+
+    return cipher_text
+
+
+def rail_fence_decrypt(cipher_text, rails):
+    fence = [[] for _ in range(rails)]
+    rail = 0
+    direction = 1
+
+    for char in cipher_text:
+        fence[rail].append(char)
+        rail += direction
+
+        if rail == rails - 1 or rail == 0:
+            direction = -direction
+
+    plain_text = ''
+    rail_index = 0
+    for _ in range(len(cipher_text)):
+        plain_text += fence[rail_index].pop(0)
+        rail_index += 1
+        if rail_index == rails:
+            rail_index = 0
+
+    return plain_text
+
+
+# Example usage:
+text = "Hello World!"
+rails = 3
+encrypted_text = rail_fence_encrypt(text, rails)
+print("Encrypted:", encrypted_text)
+
+decrypted_text = rail_fence_decrypt(encrypted_text, rails)
+print("Decrypted:", decrypted_text)
+
+
+OUTPUT:
+Encrypted: HorelWoldl!
+Decrypted: Hello World!
