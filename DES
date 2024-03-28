@@ -1,0 +1,41 @@
+from Crypto.Cipher import DES
+
+# Function to pad the plaintext to a multiple of 8 bytes
+def pad(text):
+    while len(text) % 8 != 0:
+        text += b' '
+    return text
+
+# Encrypt plaintext using DES with the given key
+def encrypt(plaintext, key):
+    cipher = DES.new(key, DES.MODE_ECB)
+    padded_plaintext = pad(plaintext)
+    encrypted_text = cipher.encrypt(padded_plaintext)
+    return encrypted_text
+
+# Decrypt ciphertext using DES with the given key
+def decrypt(ciphertext, key):
+    cipher = DES.new(key, DES.MODE_ECB)
+    decrypted_text = cipher.decrypt(ciphertext)
+    return decrypted_text.rstrip(b' ')
+
+# Example usage
+if __name__ == "__main__":
+    # Key must be 8 bytes long (64 bits)
+    key = b'abcdefgh'
+
+    # Plain text to encrypt
+    plaintext = b'Hello world'
+
+    # Encrypt the plaintext
+    encrypted_text = encrypt(plaintext, key)
+    print("Encrypted:", encrypted_text.hex())
+
+    # Decrypt the ciphertext
+    decrypted_text = decrypt(encrypted_text, key)
+    print("Decrypted:", decrypted_text.decode('utf-8'))
+
+
+OUTPUT:
+Encrypted: c1b7f48c82f7477b
+Decrypted: Hello world
